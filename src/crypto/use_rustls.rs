@@ -16,7 +16,6 @@ pub fn aes_128_ecb(pt: &[u8], key: &[u8]) -> Vec<u8> {
     let mut res = vec![0; pt.len() +  aes::Aes128::block_size()];
     let r = ecb::Encryptor::<aes::Aes128>::new(key.into()).encrypt_padded_b2b_mut::<Pkcs7>(pt, &mut res).unwrap();
     let len = r.len();
-    drop(r);
     res.truncate(len);
     res
 }
@@ -25,7 +24,6 @@ fn aes_128_ecb_decrypt(ct: &[u8], key: &[u8]) -> Result<Vec<u8>, UnpadError> {
     let mut res = vec![0; ct.len() + aes::Aes128::block_size()];
     let r = ecb::Decryptor::<aes::Aes128>::new(key.into()).decrypt_padded_b2b_mut::<Pkcs7>(ct, &mut res)?;
     let len = r.len();
-    drop(r);
     res.truncate(len);
     Ok(res)
 }
@@ -34,7 +32,6 @@ pub fn aes_128_cbc(pt: &[u8], key: &[u8], iv: &[u8]) -> Vec<u8> {
     let mut res = vec![0; pt.len() + aes::Aes128::block_size()];
     let r = cbc::Encryptor::<aes::Aes128>::new(key.into(), iv.into()).encrypt_padded_b2b_mut::<Pkcs7>(pt, &mut res).unwrap();
     let len = r.len();
-    drop(r);
     res.truncate(len);
     res
 }

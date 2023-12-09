@@ -1,15 +1,16 @@
 mod key;
-#[cfg(feature = "use-rustls")]
-mod use_rustls;
 #[cfg(feature = "use-openssl")]
 mod use_openssl;
+#[cfg(feature = "use-rustls")]
+mod use_rustls;
 
+use base64::prelude::BASE64_STANDARD;
+use base64::Engine;
 #[cfg(feature = "default-rustls")]
 pub(crate) use use_rustls::*;
 
 #[cfg(feature = "default-openssl")]
 pub(crate) use use_openssl::*;
-
 
 use rand::RngCore;
 use serde::Serialize;
@@ -68,12 +69,12 @@ pub fn weapi(text: &[u8]) -> WeapiForm {
         .collect::<Vec<u8>>();
 
     let params = {
-        let p = base64::encode(aes_128_cbc(
+        let p = BASE64_STANDARD.encode(aes_128_cbc(
             text,
             PRESET_KEY.as_bytes(),
             IV.as_bytes(),
         ));
-        base64::encode(aes_128_cbc(p.as_bytes(), &sk, IV.as_bytes()))
+        BASE64_STANDARD.encode(aes_128_cbc(p.as_bytes(), &sk, IV.as_bytes()))
     };
 
     let enc_sec_key = {
